@@ -1,0 +1,166 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class Spielfeld extends JFrame implements ActionListener {
+
+    String entscheidung;
+    boolean spielerGewonnen;
+    int _x = 7;
+    int _y = 7;
+    boolean gewonnen;
+    int status;
+    JButton _button;
+    JButton[][] _buttonArray;
+    GridBagConstraints _gbc;
+    JLabel[] _zahlenLeiste;
+    JLabel[] _buchstabenLeiste;
+    String[] buchstaben = new String[]{"A","B","C","D","E","F","G"};
+    JPanel hintergrund = new JPanel();
+    JLabel nullnull = new JLabel("");
+    JLabel anzeige;
+    int[][] _intArray;
+    Verarbeitung ver = new Verarbeitung();
+    static Random_KI ki = new Random_KI();
+    Spielfeld(String title){
+
+        spielerGewonnen = false;
+        anzeige = new JLabel("<html><body><h1 style=\"color:red;\">Du bist dran</h1></body></html");
+        _zahlenLeiste = new JLabel[_x+1];
+        _buchstabenLeiste = new JLabel[_y+1];
+
+        _buttonArray = new JButton[_x][_y];
+        _gbc         = new GridBagConstraints();
+        _intArray    = new int[_x][_y];
+        hintergrund.setLayout(new GridBagLayout());
+        hintergrund.setBackground(new Color(215, 189, 128));
+        add(hintergrund);
+
+        _gbc.gridy = 0;
+        _gbc.gridx = 0;
+        nullnull.setPreferredSize((new Dimension(45,45)));
+        hintergrund.add(nullnull, _gbc);
+
+        for (int i = 0; i < _x; i++) {
+            _zahlenLeiste[i] = new JLabel("<html><body><h2>" + i +"</h2></body></html>");
+            _gbc.gridx = i+1;
+            hintergrund.add(_zahlenLeiste[i]);
+        }
+        for (int i = 0; i < _y; i++) {
+            _buchstabenLeiste[i] = new JLabel("<html><body><h2>" + buchstaben[i] +"</h2></body></html>");
+        }
+
+
+        for (int x = 0; x < _x; x++) {
+            for (int y = 0; y < _y; y++) {
+                if(x == 0){
+                    _gbc.gridx = 0;
+                    _gbc.gridy = y+1;
+                    hintergrund.add(_buchstabenLeiste[y], _gbc);
+                }
+                _buttonArray[x][y] = new JButton();
+                _buttonArray[x][y].setPreferredSize(new Dimension(45,45));
+                _buttonArray[x][y].addActionListener(this);
+                _buttonArray[x][y].setActionCommand(x + "" + y);
+                _intArray[x][y] = 0;
+                _gbc.gridx = x+1;
+                _gbc.gridy = y+1;
+                _buttonArray[x][y].setBackground(new Color(100,100,220));
+                hintergrund.add(_buttonArray[x][y], _gbc);
+            }
+        }
+
+        _gbc.gridwidth = _x;
+        _gbc.gridheight = _y;
+        _gbc.gridy = 9;
+        _gbc.gridx = 1;
+        hintergrund.add(anzeige, _gbc);
+
+        Schiffe schiff = new Schiffe();
+        for (int i = 2; i < 5; i++) {
+            _intArray = schiff.schiff_setzten(_intArray, i);
+        }
+
+
+        zeigen();
+        pack();
+        setVisible(true);
+        setResizable(false);
+        setLocation(800, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+        
+    public void zeigen(){
+        for (int x = 0; x < _x; x++) {
+            for (int y = 0; y < _y; y++) {
+                if (_intArray[x][y] != 0){
+                    _buttonArray[x][y].setBackground(new Color(105,105,105));
+                }
+            }
+
+        }
+    }
+
+
+    public static void main(String[] args){
+        Spielfeld feld = new Spielfeld("Schiffe versenken");
+    }
+
+    public void auswertung(int rueckgabe, String koordinate){
+        int X = Integer.parseInt(koordinate.substring(0,1));
+        int Y = Integer.parseInt(koordinate.substring(1,2));
+        if (_buttonArray[X][Y].getText().equals("O") || _buttonArray[X][Y].getText().equals("X") || _buttonArray[X][Y].getText().equals("V")){
+        }else {
+            if (rueckgabe == 0){
+                _buttonArray[X][Y].setText("O");
+            } else if (rueckgabe == 1) {
+                _buttonArray[X][Y].setText("X");
+            } else {
+                _buttonArray[X][Y].setText("V");
+            }
+        }
+    }
+
+    public void checkSpielerSieg(){
+        gewonnen = true;
+        for (int i = 0; i < _x; i++) {
+            for (int j = 0; j < _y; j++) {
+                if (ki._intArray[i][j] != 0){
+                    gewonnen = false;
+                }
+            }
+        }
+        if (gewonnen){
+            dispose();
+            Ende ende = new Ende("Ende", "Glückwunsch du hast gewonnen");
+        }
+    }
+
+    public void checkKiSieg(){
+        gewonnen = true;
+        for (int i = 0; i < _x; i++) {
+            for (int j = 0; j < _y; j++) {
+                if (_intArray[i][j] != 0){
+                    gewonnen = false;
+                }
+            }
+        }
+        if (gewonnen){
+            dispose();
+            Ende ende = new Ende("Ende", "Leider verloren");
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent evt) {
+        String eingabe = evt.getActionCommand();
+        status = ver.eingabeSpieler(eingabe);
+        auswertung(status, eingabe+"");
+        checkSpielerSieg();
+
+        entscheidung = ki.auswahl();
+        _intArray = ver.eingabeKi(entscheidung, _intArray);
+        checkKiSieg();
+    }
+}
