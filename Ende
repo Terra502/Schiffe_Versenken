@@ -1,0 +1,73 @@
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.*;
+import javax.swing.JButton;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+
+public class Ende extends JFrame implements ActionListener
+{
+    JLabel _text;
+    JButton _erneut;
+    JButton _verlassen;
+    JPanel _panelErneut;
+    JPanel _panelVerlassen;
+
+    GridBagConstraints _gbc;
+
+    Ende(String title, String nachricht)
+    {
+        super(title);
+        _text       = new JLabel("<html><body><h1 style=\"font-size:2em;color:red;\">" + nachricht + "</h1></body></html>");
+        _erneut    = new JButton("<html><body><font color=\"red\">Erneut</font></body></html>");
+        _verlassen = new JButton("<html><body><font color=\"blue\">Verlassen</font></body></html>");
+        _panelErneut    = new JPanel();
+        _panelVerlassen = new JPanel();
+
+
+        setLayout(new GridBagLayout());
+        getContentPane().setBackground(new Color(255,215,0));
+        _panelErneut.setBackground(new Color(255,215,0));
+        _panelVerlassen.setBackground(new Color(255,215,0));
+        _gbc = new GridBagConstraints();
+
+
+        _gbc.gridx = 1;
+        _gbc.gridy = 0;
+        _gbc.anchor = GridBagConstraints.PAGE_START;
+        add(_text, _gbc);
+
+        _panelErneut.setLayout(new BorderLayout());
+        _panelErneut.add(_erneut, BorderLayout.SOUTH);
+        _panelErneut.setPreferredSize(new Dimension(100,100));
+        _gbc.gridx = 1;
+        _gbc.gridy = 5;
+        _gbc.anchor = GridBagConstraints.LAST_LINE_START;
+        add(_panelErneut, _gbc);
+        _erneut.addActionListener(this);
+        _erneut.setActionCommand("erneut");
+
+        _panelVerlassen.setLayout(new BorderLayout());
+        _panelVerlassen.add(_verlassen);
+        _panelErneut.setPreferredSize(new Dimension(100,100));
+        _gbc.gridx = 1;
+        _gbc.gridy = 5;
+        _gbc.anchor = GridBagConstraints.LAST_LINE_END;
+        add(_panelVerlassen, _gbc);
+        _verlassen.addActionListener(this);
+        _verlassen.setActionCommand("verlassen");
+
+        pack();
+        setVisible(true);
+        setResizable(false);
+        setLocation(800, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+
+    public void actionPerformed(ActionEvent evt)
+    {
+        if (evt.getActionCommand().equals("verlassen")) {
+            dispose();
+        } // end of if
+    }
+}
