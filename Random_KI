@@ -1,0 +1,45 @@
+import java.util.Random;
+public class Random_KI {
+
+    int _x;
+    int _y;
+    Random rand;
+    int[][] _intArray;
+    boolean[][] auswahlListe;
+
+    Random_KI(){
+        rand = new Random();
+        auswahlListe = new boolean[_x][_y];
+        _x = 7;
+        _y = 7;
+        _intArray = new int[_x][_y];
+
+        for (int x = 0; x < _x; x++) {
+            for (int y = 0; y < _y; y++) {
+                _intArray[x][y] = 0;
+            }
+        }
+        Schiffe schiff = new Schiffe();
+        for (int i = 2; i < 5; i++) {
+            _intArray = schiff.schiff_setzten(_intArray, i);
+        }
+
+    }
+
+    public String auswahl(){
+        boolean weiter = false;
+        int X = 0;
+        int Y = 0;
+        while (weiter = false){
+            X = rand.nextInt(_x);
+            Y = rand.nextInt(_y);
+            if (auswahlListe[X][Y] == false){
+                auswahlListe[X][Y] = true;
+                weiter = true;
+            }
+        }
+        return X + "" + Y;
+
+    }
+
+}
