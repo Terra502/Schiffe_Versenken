@@ -1,0 +1,57 @@
+public class Verarbeitung {
+    int status = 0;  //0 = daneben, 1 = treffer, 2 = versenkt
+    String eingabe;
+    int x;
+    int y;
+    int temp;
+    boolean gewonnen;
+    Verarbeitung(){}
+
+
+    public int eingabeSpieler(String koordinate){
+        eingabe = koordinate;
+        x = Integer.parseInt(eingabe.substring(0,1));
+        y = Integer.parseInt(eingabe.substring(1,2));
+        Random_KI ki = Spielfeld.ki;
+
+        if (ki._intArray[x][y] == 0){
+            return 0;
+        } else {
+            temp = ki._intArray[x][y];
+            ki._intArray[x][y] = 0;
+            for (int _i = 0; _i < ki._x; _i++) {
+                for (int _j = 0; _j < ki._y; _j++) {
+                    if (ki._intArray[_i][_j] == temp) {
+                        return 1;
+                    }
+                }
+            } return 2;
+        }
+
+    }
+
+    public int[][] eingabeKi(String koordinate, int[][] _intArray){
+        eingabe = koordinate;
+        x = Integer.parseInt((eingabe.substring(0,1)));
+        y = Integer.parseInt(eingabe.substring(1,2));
+        _intArray[x][y] = 0;
+        return _intArray;
+
+        /*
+        if (_intArray[x][y] == 0){
+            return 0;
+        } else {
+            temp = _intArray[x][y];
+            _intArray[x][y] = 0;
+            for (int _i = 0; _i < 7; _i++) {
+                for (int _j = 0; _j < 7; _j++) {
+                    if (_intArray[_i][_j] == temp) {
+                        return 1;
+                    }
+                }
+            } return 2;
+        }*/
+
+    }
+
+}
